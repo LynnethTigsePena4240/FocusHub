@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-export default function WeatherScreen() {
+export default function PomodoroScreen() {
 
   return (
     <View style={styles.container}>
