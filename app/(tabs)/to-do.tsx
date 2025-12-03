@@ -8,7 +8,7 @@ const getThemedColors = (isDarkMode: boolean) => ({
   background: isDarkMode ? '#121212' : '#F0F0F0',
   text: isDarkMode ? '#FFFFFF' : '#333333',
   card: isDarkMode ? '#1E1E1E' : '#FFFFFF',
-  primary: '#007AFF',
+  primary: '#2f00ffff',
 });
 
 // small spacing divider
@@ -115,12 +115,12 @@ export default function TaskPage() {
           min={0}
           max={100}
           barColor={barColor}
-          backColor="#ddd"
-          borderColor="black"
+          backColor={isDarkMode ? "#343434ff" :"#ddd"}
+          borderColor={isDarkMode ? "gray" : "black"}
         />
 
         <Separator />
-        <Text style={styles.percentageText}>{progress}% Completed</Text>
+        <Text style={[styles.percentageText, { color: colors.text }]}>{progress}% Completed</Text>
       </View>
 
       <Separator />
@@ -130,7 +130,7 @@ export default function TaskPage() {
       {/* input row */}
       <View style={styles.inputContainer}>
         <TextInput
-          style={[styles.input]}
+          style={[styles.input, { backgroundColor: isDarkMode ? "#343434ff":"#ddd", color:colors.text }]}
           placeholder="Add a new task"
           placeholderTextColor={isDarkMode ? "#999999" : "#555555"}
           value={newTask}
@@ -181,7 +181,6 @@ const styles = StyleSheet.create({
   percentageText: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#fff",
     textAlign: "center",
   },
   hintText: {
@@ -237,7 +236,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     marginVertical: 10,
-    backgroundColor: "#3e6ca9ff",
+    backgroundColor: "#002d59ff",
     borderRadius: 8,
     paddingRight: 40,
   },
