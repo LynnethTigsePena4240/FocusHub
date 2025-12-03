@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { useMotivation } from "../../stores/motivationStore";
 import { useTasks } from "../../stores/taskStore";
 
@@ -27,7 +27,8 @@ export default function OverviewScreen() {
   const colors = getThemedColors(isDarkMode);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
       {/* Header */}
       <Text style={[styles.title, { color: colors.text }]}>
@@ -108,7 +109,37 @@ export default function OverviewScreen() {
           Get Motivated
         </Link>
       </View>
-    </View>
+
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <Text style={[styles.cardTitle, { color: colors.text }]}>
+          Weather Preview
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          [Display current city and temperature from Weather State]
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          Example: Brampton, 0°C, Snow
+        </Text>
+        <Link href="/weather" style={[styles.link, { color: colors.primary }]}>
+          View Full Weather Details
+        </Link>
+      </View>
+
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <Text style={[styles.cardTitle, { color: colors.text }]}>
+          Pomodoro Timer
+        </Text>
+        <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
+          1hr timer (placeholder)
+        </Text>
+        <Link href="/pomodoro" style={[styles.link, { color: colors.primary }]}>
+          Set Timer
+        </Link>
+      </View>
+
+      </ScrollView>
+
+    </SafeAreaView>
   );
 }
 
@@ -118,6 +149,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 70,
     paddingHorizontal: 20,
+  },
+  scrollContent: {
+  paddingTop: 70,
+  paddingHorizontal: 20,
+  paddingBottom: 40,
   },
   title: {
     fontSize: 28,
