@@ -28,8 +28,9 @@ export default function TabLayout() {
         name="to-do"
         options={{
           title: 'To-Do',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="checkmark.circle.fill" color={color} />,
-        }}
+          tabBarIcon: ({ color }) => ( <IconSymbol size={28} name="checkmark.circle.fill" color={color} />),
+        
+          }}
       />
       <Tabs.Screen
         name="weather"
