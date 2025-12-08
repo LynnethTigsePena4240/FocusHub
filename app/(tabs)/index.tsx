@@ -3,6 +3,7 @@ import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { useMotivation } from "../../stores/motivationStore";
 import { useTasks } from "../../stores/taskStore";
+import { useWeather } from "../../stores/weatherStore"; 
 
 // Basic color theme helper
 const getThemedColors = (isDarkMode: boolean) => ({
@@ -21,13 +22,20 @@ export default function OverviewScreen() {
   // Get motivation quote
   const { quote, isLoading: isQuoteLoading } = useMotivation();
 
+  //Get weather info 
+  const {temp,city,isLoading } = useWeather(); 
+
+  // Get Pondoro info 
+
+
   // Handle theme colors
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const colors = getThemedColors(isDarkMode);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    // <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
       {/* Header */}
@@ -109,21 +117,32 @@ export default function OverviewScreen() {
           Get Motivated
         </Link>
       </View>
+      
+      {/* Weather card */}
 
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         <Text style={[styles.cardTitle, { color: colors.text }]}>
           Weather Preview
         </Text>
         <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
-          [Display current city and temperature from Weather State]
+      
+         {isLoading ? "Loading..." : `${city}`}
+
         </Text>
         <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
-          Example: Brampton, 0°C, Snow
+
+          {isLoading ? "Loading Temp..": `${temp}`}
+
         </Text>
+
+        {/* Link to weather page */}
+
         <Link href="/weather" style={[styles.link, { color: colors.primary }]}>
           View Full Weather Details
         </Link>
       </View>
+           
+      {/* Pomodoro card */}
 
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         <Text style={[styles.cardTitle, { color: colors.text }]}>
@@ -132,6 +151,9 @@ export default function OverviewScreen() {
         <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
           1hr timer (placeholder)
         </Text>
+        
+        {/* Link to pomodoro page */}
+
         <Link href="/pomodoro" style={[styles.link, { color: colors.primary }]}>
           Set Timer
         </Link>
@@ -139,7 +161,7 @@ export default function OverviewScreen() {
 
       </ScrollView>
 
-    </SafeAreaView>
+// </SafeAreaView>    
   );
 }
 
