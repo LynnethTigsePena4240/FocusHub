@@ -47,14 +47,14 @@ export default function PomodoroScreen() {
       setIsRunning((prev)=> !prev)
     }
 
-    //reset timmer function
+    //reset timer function
     const handleReset = () => {
       setIsRunning(false)
       setSecLeft(mode === 'focus' ? FOCUS_TIME:BREAK_TIME)
     }
 
     //switch from modes
-    const switchMode = (newMode) => {
+    const switchMode = (newMode: React.SetStateAction<string>) => {
       setMode(newMode)
       setIsRunning(false)
       setSecLeft(newMode === "focus" ? FOCUS_TIME:BREAK_TIME)
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   btn:{
     padding: 5,
-    backgroundColor: '007AFF'
+    backgroundColor: '#007AFF'
   },
   btnText:{
     fontSize: 20,
