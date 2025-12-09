@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { usePomodoro } from '../../stores/pomodoroStore';
 
 export default function PomodoroScreen() {
   const colorScheme = useColorScheme();
-
-  const FOCUS_TIME = 25*60; //25 min for focus time
-  const BREAK_TIME = 5*60// 5 min for break
-  const [mode, setMode] = useState('focus')
-  const [secLeft, setSecLeft] = useState(FOCUS_TIME)
-  const [isRunning, setIsRunning] = useState(false)
+  
+  const { mode, setMode, secLeft, startPause, reset, isRunning } = usePomodoro();
   
   const isDarkMode = colorScheme === 'dark';
   const colors = {
@@ -19,46 +16,10 @@ export default function PomodoroScreen() {
     error: '#CF6679',
     };
 
-    useEffect(()=> {
-      if(!isRunning) return;
-
-      const interval = setInterval(() => {
-        setSecLeft((prev) => {
-          if(prev <= 1)
-          {
-            const nextMode = mode === "focus" ? "break" : "focus"
-            const nextTime = nextMode === "focus" ? FOCUS_TIME : BREAK_TIME
-
-            setMode(nextMode)
-            setIsRunning(false)
-            return nextTime
-          }
-          return prev -1
-        })
-      }, 1000)
-      return () => clearInterval(interval)
-    }, [isRunning, mode])
 
     const min = String(Math.floor(secLeft /60)).padStart(2,"0")
     const sec = String(secLeft % 60).padStart(2,"0")
 
-    //start and pause btn function
-    const handleStartPause = () => {
-      setIsRunning((prev)=> !prev)
-    }
-
-    //reset timer function
-    const handleReset = () => {
-      setIsRunning(false)
-      setSecLeft(mode === 'focus' ? FOCUS_TIME:BREAK_TIME)
-    }
-
-    //switch from modes
-    const switchMode = (newMode: React.SetStateAction<string>) => {
-      setMode(newMode)
-      setIsRunning(false)
-      setSecLeft(newMode === "focus" ? FOCUS_TIME:BREAK_TIME)
-    }
 
 
   return (
@@ -68,14 +29,14 @@ export default function PomodoroScreen() {
       <View style={styles.content}>
       <View style={styles.modeRow}>
         <TouchableOpacity style={[styles.modeBtn, mode === "focus" && styles.modeBtnActive,]}
-        onPress={() => switchMode("focus")}
+        onPress={() => setMode("focus")}
         >
           <Text style={[styles.modeText,{color:colors.text}, mode === "focus" && styles.modeTextActive,]}> Focus</Text>
 
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.modeBtn, mode === "break" && styles.modeBtnActive,]}
-        onPress={() => switchMode("break")}
+        onPress={() => setMode("break")}
         >
           <Text style={[styles.modeText,{color:colors.text}, mode === "break" && styles.modeTextActive,]}> Break </Text>
 
@@ -88,13 +49,13 @@ export default function PomodoroScreen() {
       </View>
 
       <View style={styles.btnRow}>
-        <TouchableOpacity style={styles.btn} onPress={handleStartPause}>
+        <TouchableOpacity style={styles.btn} onPress={startPause}>
           <Text style={[styles.btnText, {color:colors.text}]}>
             {isRunning ? "Pause" : "Start"}
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.btn]} onPress={handleReset}>
+        <TouchableOpacity style={[styles.btn]} onPress={reset}>
           <Text style={[styles.btnText, {color:colors.text}]}>
             Reset
           </Text>
@@ -167,10 +128,10 @@ const styles = StyleSheet.create({
   btnRow:{
     flexDirection: "row",
     gap: 20,
+    marginTop: 10
   },
   btn:{
-    padding: 5,
-    backgroundColor: '#007AFF'
+    borderRadius: 5
   },
   btnText:{
     fontSize: 20,

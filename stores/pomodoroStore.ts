@@ -83,5 +83,13 @@ export const usePomodoro = () => {
     });
   };
 
-  return { ...state, startPause, reset };
+  const setMode = (newMode: 'focus' | 'break') => {
+    updateState({
+      mode: newMode,
+      secLeft: newMode === 'focus' ? FOCUS_TIME : BREAK_TIME,
+      isRunning: false,
+    })
+  }
+
+  return { ...state, startPause, reset, setMode };
 };

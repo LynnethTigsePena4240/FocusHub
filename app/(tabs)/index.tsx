@@ -1,10 +1,10 @@
 import { Link } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, useColorScheme ,TouchableOpacity} from 'react-native';
+import { ScrollView, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { useMotivation } from "../../stores/motivationStore";
+import { usePomodoro } from '../../stores/pomodoroStore';
 import { useTasks } from "../../stores/taskStore";
-import { useWeather } from "../../stores/weatherStore"; 
-import { usePomodoro }from '../../stores/pomodoroStore';
+import { useWeather } from "../../stores/weatherStore";
 
 // Basic color theme helper
 const getThemedColors = (isDarkMode: boolean) => ({
@@ -27,7 +27,7 @@ export default function OverviewScreen() {
   const {temp,city,isLoading } = useWeather(); 
 
   // Get Pondoro info 
-  const { mode, secLeft, isRunning, startPause, reset} = usePomodoro();
+  const { mode, secLeft} = usePomodoro();
   const min = String(Math.floor(secLeft / 60)).padStart(2, '0');
   const sec = String(secLeft % 60).padStart(2, '0');
 
@@ -156,21 +156,8 @@ export default function OverviewScreen() {
           Pomodoro Timer
         </Text>
         <Text style={[styles.cardContent, { color: colors.secondaryText }]}>
-        {min}: {sec}    {mode}
+        {min}:{sec} | {mode} timer
         </Text>
-          <View style={{ flexDirection: 'row', marginTop: 5, gap: 10 }}>
-
-            <TouchableOpacity onPress={startPause}>
-              <Text style={{ color: colors.primary }}>
-                {isRunning ? 'Pause' : 'Start'}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={reset}>
-              <Text style={{ color: colors.primary }}>Reset</Text>
-            </TouchableOpacity>
-
-          </View>
       
        
       
