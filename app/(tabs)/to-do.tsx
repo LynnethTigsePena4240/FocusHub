@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Button, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from "react-native";
+import { Alert, Animated, Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from "react-native";
 import { useTasks } from "../../stores/taskStore";
 import ProgressBar from "../components/progressBar";
 
@@ -19,6 +19,7 @@ function Separator() {
 // handles fade animation for each task row
 function TaskFade({ item, onToggle, onDelete }) {
   const fadeAnimation = useRef(new Animated.Value(0)).current;
+  const [isVisible, setIsVisible] = useState(false);
 
   // fade in when the row appears
   useEffect(() => {
@@ -40,7 +41,26 @@ function TaskFade({ item, onToggle, onDelete }) {
     });
   };
 
+  const confirmDelete = () => {
+    setIsVisible(false);
+    deleteTask();
+  };
+
   return (
+    <>
+    <Modal visible={isVisible} transparent animationType="fade" onRequestClose={() => setIsVisible(false)}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Confirm Deletion</Text>
+          <Text style={styles.modalMessage}>Are you sure you want to delete the task: "{item.title}"?</Text>
+              <View style={{ flexDirection : 'row', justifyContent: 'space-between', marginTop: 20 }}>
+                <Button title="Cancel" onPress={() => setIsVisible(false)} />
+                <Button title="Delete" color="red" onPress={confirmDelete} />
+              </View>
+        </View>
+      </View>
+    </Modal>
+
     <Animated.View style={[styles.taskContainer, { opacity: fadeAnimation }]}>
       <TouchableOpacity onPress={() => onToggle(item.id)}>
         <Text style={[styles.taskText, item.completed && styles.taskTextCompleted]}>
@@ -49,9 +69,10 @@ function TaskFade({ item, onToggle, onDelete }) {
       </TouchableOpacity>
 
       <View style={styles.button}>
-        <Button title="Delete" onPress={deleteTask} />
+        <Button title="Delete" onPress={() => setIsVisible(true)} />
       </View>
     </Animated.View>
+    </>
   )
 }
 
@@ -62,6 +83,7 @@ export default function TaskPage() {
   const [newTask, setNewTask] = useState("");
   const [progress, setProgress] = useState(0);
   const [notification, setNotification] = useState(null); // short alerts
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // dark mode detection
   const colorScheme = useColorScheme();
@@ -72,6 +94,7 @@ export default function TaskPage() {
   const handleAddTask = () => {
     const title = newTask.trim();
     if (title === "") {
+      Alert.alert("Input Error", "Please enter a task.");
       setNotification("Please enter a task.");
       return;
     }
@@ -98,7 +121,25 @@ export default function TaskPage() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.text }]}>Task Manager</Text>
+      <Text style={[styles.title, { color: colors.text }]}>To-Do List</Text>
+
+      <Modal visible={isModalVisible} transparent animationType="slide" onRequestClose={() => setIsModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>How It Works:</Text>
+            <Text style={styles.modalMessage}>
+              Use the "Add' button to create new tasks. {"\n"}
+              Tap on a task to mark it complete. {"\n"}
+              Use the "Delete" button to remove tasks. {"\n"}
+              </Text>
+            <Button title="Got it!" onPress={() => setIsModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+
+      <View style={{alignItems: 'center', marginBottom: 5}}>
+        <Button title="Help Button" onPress={() => setIsModalVisible(true)} />
+      </View>
 
       {notification && (
         <View style={styles.notification}>
@@ -122,10 +163,6 @@ export default function TaskPage() {
         <Separator />
         <Text style={[styles.percentageText, { color: colors.text }]}>{progress}% Completed</Text>
       </View>
-
-      <Separator />
-      <Text style={styles.hintText}>Tap a task name to mark it complete!</Text>
-      <Separator />
 
       {/* input row */}
       <View style={styles.inputContainer}>
@@ -252,5 +289,32 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 10,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+
+  modalMessage: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
   },
 });
