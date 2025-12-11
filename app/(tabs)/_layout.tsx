@@ -5,6 +5,7 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function TabLayout() {
@@ -28,7 +29,7 @@ export default function TabLayout() {
         name="to-do"
         options={{
           title: 'To-Do',
-          tabBarIcon: ({ color }) => ( <IconSymbol size={28} name="checkmark.circle.fill" color={color} />),
+          tabBarIcon: ({ color }) => ( <Ionicons size={28} name="checkmark-circle" color={color} />),
         
           }}
       />
@@ -36,14 +37,14 @@ export default function TabLayout() {
         name="weather"
         options={{
           title: 'Weather',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="cloud.bolt.circle.fill" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="thunderstorm" color={color} />,
         }}
       />
       <Tabs.Screen
         name="pomodoro"
         options={{
           title: 'Pomodoro',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="timer.circle.fill" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="timer" color={color} />,
         }}
       />
       <Tabs.Screen
