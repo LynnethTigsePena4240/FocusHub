@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Button, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Animated, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { useMotivation } from "../../stores/motivationStore";
 
 // theme colors for dark/light mode
@@ -43,6 +43,25 @@ export default function MotivationScreen() {
       useNativeDriver: true,
     }).start();
   }, [quote, isLoading]);
+
+  // delay for the motivation refresh button 
+
+const fadeBtn = useRef(new Animated.Value(1)).current;
+
+useEffect(() => {
+  if (isLoading) {
+      Animated.sequence([
+        Animated.timing(fadeBtn, {
+          toValue: 1,
+          duration: 20000,
+          useNativeDriver: true })
+      
+      ]).start();
+  } else {
+    fadeBtn.setValue(1); // reset when loading ends
+  }
+}, [isLoading]);
+
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -95,12 +114,24 @@ export default function MotivationScreen() {
       </View>
 
       {/* fetch new quote button */}
-      <Button
-        title={isLoading ? "Loading..." : "New Quote"}
-        onPress={fetchNewQuote}
-        disabled={isLoading}
-        color={colors.primary}
-      />
+      <Animated.View style={{ opacity: fadeBtn }}>
+        <TouchableOpacity
+          onPress={fetchNewQuote}
+          disabled={isLoading}
+          style={{
+            backgroundColor: colors.primary,
+            padding: 15,
+            borderRadius: 10,
+            alignItems: 'center',
+          }}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={{ color: 'white', fontWeight: '600' }}>New Quote</Text>
+          )}
+        </TouchableOpacity>
+      </Animated.View>
 
       <View style={styles.moodSection}>
         <Text style={[styles.moodTitle, { color: colors.text }]}>

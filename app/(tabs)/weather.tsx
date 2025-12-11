@@ -1,12 +1,13 @@
 import * as Location from 'expo-location';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
-  Button,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View
+    ActivityIndicator,
+    Animated,
+    Button,
+    StyleSheet,
+    Text,
+    useColorScheme,
+    View,
 } from 'react-native';
 
 const WEATHER_API_URL = 'https://api.open-meteo.com/v1/forecast';
@@ -49,8 +50,12 @@ const getCityNameFromNominatim = async (latitude: number, longitude: number): Pr
     return null;
 };
 
+
+
+
 export default function WeatherScreen() {
     const colorScheme = useColorScheme();
+    
 
     const isDarkMode = colorScheme === 'dark';
     const colors = {
@@ -64,6 +69,38 @@ export default function WeatherScreen() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [weather, setWeather] = useState<WeatherData | null>(null);
+    // have a staggered output for the city, temp, and emoji 
+  const fadeCity = useRef(new Animated.Value(0)).current;
+  const fadeTemp = useRef(new Animated.Value(0)).current;
+  const fadeEmoji = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (weather) return;
+
+    // Reset values
+    fadeCity.setValue(0);
+    fadeTemp.setValue(0);
+    fadeEmoji.setValue(0);
+
+    // Staggered animation
+    Animated.stagger(300, [
+      Animated.timing(fadeCity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeTemp, {
+        toValue: 1,
+        duration: 1500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeEmoji, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [weather]);
 
     const fetchWeather = async () => {
         setLoading(true);
@@ -138,14 +175,19 @@ export default function WeatherScreen() {
                     <Text style={[styles.errorText, { color: colors.error }]}>Error: {error}</Text>
                 ) : weather ? (
                     <View style={[styles.weatherCard, { backgroundColor: colors.card }]}>
-                        <Text style={[styles.cityText, { color: colors.text }]}>{weather.city}</Text>
-                        <Text style={[styles.tempText, { color: colors.primary }]}>{weather.temp}°C</Text>
-                        <Text style={[styles.conditionText, { color: colors.text }]}>
-                            {weatherDisplay.text}
-                        </Text>
-                        <Text style={{ fontSize: 48, marginTop: 10 }}>
-                            {weatherDisplay.emoji}
-                        </Text>
+                        
+                        <Animated.Text style={[styles.cityText, { color: colors.text, opacity: fadeCity }]}>
+                        {weather.city}
+                        </Animated.Text>
+
+                        <Animated.Text style={[styles.tempText, { color: colors.primary, opacity: fadeTemp }]}>
+                        {weather.temp}°C
+                        </Animated.Text>
+
+                        <Animated.Text style={{ fontSize: 48, marginTop: 10, opacity: fadeEmoji }}>
+                        {weatherDisplay.emoji}
+                        </Animated.Text>
+
                     </View>
                 ) : (
                     <Text style={{ color: colors.text }}>Press the button to get the weather.</Text>
