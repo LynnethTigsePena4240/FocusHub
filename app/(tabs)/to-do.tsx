@@ -94,12 +94,11 @@ export default function TaskPage() {
   const handleAddTask = () => {
     const title = newTask.trim();
     if (title === "") {
-      Alert.alert("Input Error", "Please enter a task.");
-      setNotification("Please enter a task.");
+      Alert.alert("Error Occurred", "Please enter a task.");
       return;
     }
     addTask(newTask);
-    setNotification('New task added: "' + newTask + '"');
+    Alert.alert("New Task Alert!", 'Task "' + newTask + '" added.');
     setNewTask("");
   };
 
